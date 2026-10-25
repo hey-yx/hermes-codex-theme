@@ -7,12 +7,12 @@
  *   - 发丝线代替阴影：1px 边框做层次，表面保持平整
  *   - 圆角走 OpenAI 官方刻度：内联代码 4px、侧栏行 8px、控件 10px、卡片/菜单/弹窗/气泡 12px、composer 20px
  *   - 边框统一 10% 前景色（浅 #e7e7e7 / 深 #2a2a2a）；用户气泡前景 5%（浅 #f3f3f3 / 深 #202020）无描边
- *   - 间距节奏：4px 网格；行高 1.4286（紧凑 1.3 / 宽松 1.55）
+ *   - 间距节奏：4px 网格；行高 1.625（紧凑 1.5 / 宽松 1.75）
  *   - 阅读栏 768 / 880 / 992px 三档（默认 880px）
  *
  * 控制入口（不在输入框加东西）：
  *   设置 → 插件 → Codex Theme：亮暗模式（跟随系统/深色/浅色）、阅读宽度、内容间距、
- *   字体（正文字体/代码字体）、气泡颜色（用户/助手的背景色与文字色）、输入框焦点（防抢占/跟随鼠标）、
+ *   字体（正文字体/代码字体）、气泡颜色（用户/助手的背景色与文字色）、
  *   语言（跟随系统/中文/英文，文案全走 i18n）、反馈问题（GitHub Issues）
  *   ⌘K：「Theme: 使用 Codex 主题」「Theme: Codex 主题设置」
  *
@@ -87,21 +87,21 @@ const DENSITIES = [
 const DENSITY_RULES = {
   compact: `:root {
   --paragraph-gap: 0.5rem;
-  --turn-block-gap: 0.875rem;
+  --turn-block-gap: 1rem;
   --tool-row-gap: 0.375rem;
   --codex-bubble-pad-y: 0.5rem;
   --codex-bubble-pad-x: 0.75rem;
   --codex-li-gap: 0.2rem;
-  --dt-line-height: 1.3 !important;
+  --dt-line-height: 1.5 !important;
 }`,
   roomy: `:root {
-  --paragraph-gap: 0.875rem;
-  --turn-block-gap: 1.625rem;
+  --paragraph-gap: 1rem;
+  --turn-block-gap: 1.875rem;
   --tool-row-gap: 0.625rem;
-  --codex-bubble-pad-y: 0.75rem;
-  --codex-bubble-pad-x: 1rem;
-  --codex-li-gap: 0.4rem;
-  --dt-line-height: 1.55 !important;
+  --codex-bubble-pad-y: 0.875rem;
+  --codex-bubble-pad-x: 1.125rem;
+  --codex-li-gap: 0.45rem;
+  --dt-line-height: 1.75 !important;
 }`
 }
 
@@ -123,11 +123,9 @@ const PREF_DEFAULTS = {
   bubbleUserBg: '',
   bubbleUserText: '',
   bubbleAssistantBg: '',
-  bubbleAssistantText: '',
-  focusGuard: 'guard'
+  bubbleAssistantText: ''
 }
 const LANGUAGES = ['system', 'zh', 'en']
-const FOCUS_GUARD_MODES = ['guard', 'follow']
 let storage = null
 let pluginOs = null
 let registerThemeEntry = () => {}
@@ -157,10 +155,6 @@ function normalizeFont(value, list) {
   return list.some(o => o.value === value) ? value : 'default'
 }
 
-function normalizeFocusGuard(value) {
-  return FOCUS_GUARD_MODES.includes(value) ? value : PREF_DEFAULTS.focusGuard
-}
-
 function normalizePrefs(stored) {
   const p = { ...PREF_DEFAULTS, ...(stored || {}) }
   return {
@@ -172,8 +166,7 @@ function normalizePrefs(stored) {
     bubbleUserBg: normalizeColor(p.bubbleUserBg),
     bubbleUserText: normalizeColor(p.bubbleUserText),
     bubbleAssistantBg: normalizeColor(p.bubbleAssistantBg),
-    bubbleAssistantText: normalizeColor(p.bubbleAssistantText),
-    focusGuard: normalizeFocusGuard(p.focusGuard)
+    bubbleAssistantText: normalizeColor(p.bubbleAssistantText)
   }
 }
 
@@ -280,11 +273,13 @@ const light = {
 
 const customCSSBase = `
 /* 字号与间距基线（阅读栏宽度 --composer-width 随偏好在 customCSS 尾部输出，
-   行高走主题 typography.line-height（--dt-line-height: 1.4286），此处只管阅读栏）。 */
+   行高走主题 typography.line-height（--dt-line-height: 1.625），此处只管阅读栏）。 */
 :root {
   --dt-user-bubble-max-width: 78%;
   --conversation-text-base-size: 0.875rem;
-  --conversation-base-line-height: 1.25rem;
+  /* 正文行距 = 字号 × 档位行高（app 消费链再乘 --chat-text-scale），
+     随 --dt-line-height 档位自动跟随（tool ticker 等像素消费点同步对齐）。 */
+  --conversation-base-line-height: calc(0.875rem * var(--dt-line-height));
   --conversation-tool-base-size: 0.75rem;
   --conversation-caption-base-size: 0.75rem;
   --conversation-caption-base-line-height: 1rem;
@@ -315,6 +310,15 @@ const customCSSBase = `
   --codex-shadow-composer: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 6px 16px -4px rgb(0 0 0 / 0.08);
   --codex-shadow-composer-focus: 0 2px 4px 0 rgb(0 0 0 / 0.06), 0 10px 24px -6px rgb(0 0 0 / 0.12);
 }
+/* 文字渲染对齐 ZCode：Hermes 在 body 上全局 -webkit-font-smoothing:antialiased
+   （灰度 AA，Retina 下笔画偏细、观感发虚）；ZCode 的渲染 CSS 无任何 smoothing
+   声明，走 Chromium 默认 subpixel 渲染，笔画饱满平滑。body 显式声明会挡住 html
+   的继承，必须同位覆盖；html body 抬特异性，不依赖 customCSS 的注入顺序。
+   app 的 .antialiased 工具类在 JS 里 0 处使用，无更高特异性竞争。 */
+html body {
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
 /* CJK 落系统 UI 变体（.蘋方 UI Text-簡）：Chromium 在 lang=zh 文档里把
    ui-sans-serif / system-ui 的 CJK 解析成普通苹方（宽且重），lang=en 才落 UI
    变体（CDP 实测确认，-apple-system 等栈同理）。app 的 i18n 会把 <html lang>
@@ -658,6 +662,22 @@ html.dark [data-slot='dialog-overlay'] {
 .codex-bubble-color input[type='color'][data-unset='true'] {
   opacity: 0.45;
 }
+/* 默认透明的档位（助手气泡背景）：色块画棋盘格标记「默认即透明」（设计工具
+   惯例）。值色块是 Chromium 写在 ::-webkit-color-swatch 内层元素上的内联样式，
+   覆盖必须带 !important；配置后恢复纯色，此规则不再命中。 */
+.codex-bubble-color input[type='color'][data-unset='transparent'] {
+  opacity: 1;
+}
+.codex-bubble-color input[type='color'][data-unset='transparent']::-webkit-color-swatch {
+  background:
+    linear-gradient(45deg, color-mix(in srgb, currentColor 10%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in srgb, currentColor 10%, transparent) 75%),
+    linear-gradient(45deg, color-mix(in srgb, currentColor 10%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in srgb, currentColor 10%, transparent) 75%),
+    transparent !important;
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px, 0 0;
+  border: none;
+  border-radius: 3px;
+}
 `
 
 // 气泡颜色（配置了才发规则）：用户气泡沿用 --dt-user-bubble 合成通道（保留
@@ -725,9 +745,10 @@ const codexTheme = {
     fontMono:
       "ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', emoji",
     // 根行高（画到 --dt-line-height）：正文、消息内容、界面文字统一的行距基线。
-    // 1.4286 对齐 ZCode 的 20px 行距（正文 0.875rem × 1.4286 ≈ 20px）；1.7 是正文
-    // 还是 0.9375rem 时代的值，偏松。「内容间距」档位会按 pref 生成 :root 声明覆盖此值。
-    lineHeight: '1.4286'
+    // 1.625 对齐 ZCode 聊天正文（编译 CSS 实测：--text-ui-base 14px ×
+    // --leading-relaxed 1.625）；旧值 1.4286 按「20px 行距」推的，实机对比偏紧。
+    // 「内容间距」档位会按 pref 生成 :root 声明覆盖此值。
+    lineHeight: '1.625'
   }
 }
 
@@ -755,7 +776,7 @@ const LOCALES = {
     widthLabel: 'Reading width',
     widthHint: 'Prose column width — Compact 768px · Comfortable 880px · Roomy 992px (ChatGPT uses 720–768px).',
     densityLabel: 'Content spacing',
-    densityHint: 'Line height and paragraph rhythm — Compact 1.3 · Comfortable 1.4286 (default) · Roomy 1.55.',
+    densityHint: 'Line height and paragraph rhythm — Compact 1.5 · Comfortable 1.625 (default) · Roomy 1.75.',
     compact: 'Compact',
     comfortable: 'Comfortable',
     roomy: 'Roomy',
@@ -779,10 +800,6 @@ const LOCALES = {
     bubbleAssistantTextHint: 'Text of assistant replies. “Default” keeps the theme foreground.',
     colorDefault: 'Default',
     panelGeneral: 'General',
-    focusLabel: 'Input focus',
-    focusHint: 'Whether the input box pulls focus back when the pointer moves over the chat or you click outside. “Hands off” (default) keeps focus where you put it — the input takes focus only at app start, when a new session opens, or when you click or type into it. “Follow mouse” restores the built-in behavior, where focus jumps to the input as the pointer moves.',
-    focusHandsOff: 'Hands off',
-    focusFollowMouse: 'Follow mouse',
     languageLabel: 'Language',
     languageHint: 'Language for this plugin’s UI (settings, palette, popups) — follows the system & app language by default, or pin it below.',
     langZh: '中文',
@@ -810,7 +827,7 @@ const LOCALES = {
     widthLabel: '阅读宽度',
     widthHint: '正文列宽 —— 紧凑 768px · 舒适 880px · 宽松 992px（ChatGPT 为 720–768px）。',
     densityLabel: '内容间距',
-    densityHint: '行距与段落节奏 —— 紧凑 1.3 · 舒适 1.4286（默认）· 宽松 1.55。',
+    densityHint: '行距与段落节奏 —— 紧凑 1.5 · 舒适 1.625（默认）· 宽松 1.75。',
     compact: '紧凑',
     comfortable: '舒适',
     roomy: '宽松',
@@ -834,10 +851,6 @@ const LOCALES = {
     bubbleAssistantTextHint: '助手回复的文字颜色。「默认」跟随主题正文色。',
     colorDefault: '默认',
     panelGeneral: '通用',
-    focusLabel: '输入框焦点',
-    focusHint: '鼠标移过聊天区或点击外部时，输入框是否把焦点抢回去。「防抢占」（默认）让焦点停在你放的位置 —— 只在应用启动、切换新会话、或你直接点击/键入输入框时聚焦；「跟随鼠标」恢复应用自带行为：鼠标一动，焦点就跳回输入框。',
-    focusHandsOff: '防抢占',
-    focusFollowMouse: '跟随鼠标',
     languageLabel: '语言',
     languageHint: '本插件界面（设置页、⌘K、弹窗）的显示语言 —— 默认跟随系统与应用语言，也可固定为中文或英文。',
     langZh: '中文',
@@ -901,7 +914,9 @@ function SettingsPanel({ title, rows }) {
 }
 
 // 拾色器必须有具体值：未配置时显示主题默认色做预览（data-unset 淡显），
-// 点「默认」清空偏好（不覆盖），外观回到主题原色。
+// 点「默认」清空偏好（不覆盖），外观回到主题原色。transparentDefault 用于
+// 默认透明的档位（助手气泡背景）：原生 input[type=color] 表达不了透明，
+// 色块画棋盘格（设计工具惯例）标记默认态，拾色器打开仍从白色起步。
 const BUBBLE_SWATCH_FALLBACK = {
   bubbleUserBg: '#f3f3f3',
   bubbleUserText: '#1a1a1a',
@@ -909,13 +924,13 @@ const BUBBLE_SWATCH_FALLBACK = {
   bubbleAssistantText: '#1a1a1a'
 }
 
-function ColorSwatch({ prefKey, value, onChange, onReset, resetLabel }) {
+function ColorSwatch({ prefKey, value, onChange, onReset, resetLabel, transparentDefault }) {
   return jsxs('div', {
     className: 'codex-bubble-color',
     children: [
       jsx('input', {
         type: 'color',
-        'data-unset': value ? 'false' : 'true',
+        'data-unset': value ? 'false' : transparentDefault ? 'transparent' : 'true',
         value: value || BUBBLE_SWATCH_FALLBACK[prefKey],
         onChange: e => onChange(e.target.value)
       }),
@@ -936,7 +951,6 @@ function SettingsPage() {
   const [bubbleUserText, setBubbleUserText] = useState(() => getPref('bubbleUserText'))
   const [bubbleAssistantBg, setBubbleAssistantBg] = useState(() => getPref('bubbleAssistantBg'))
   const [bubbleAssistantText, setBubbleAssistantText] = useState(() => getPref('bubbleAssistantText'))
-  const [focusGuard, setFocusGuard] = useState(() => getPref('focusGuard'))
 
   const pickWidth = value => {
     setPref('colWidth', value)
@@ -973,11 +987,6 @@ function SettingsPage() {
   const resetBubbleColor = (key, setter) => () => {
     setPref(key, '')
     setter('')
-  }
-
-  const pickFocusGuard = value => {
-    setPref('focusGuard', value)
-    setFocusGuard(value)
   }
 
   return jsxs('div', {
@@ -1109,6 +1118,7 @@ function SettingsPage() {
             control: jsx(ColorSwatch, {
               prefKey: 'bubbleAssistantBg',
               value: bubbleAssistantBg,
+              transparentDefault: true,
               onChange: pickBubbleColor('bubbleAssistantBg', setBubbleAssistantBg),
               onReset: resetBubbleColor('bubbleAssistantBg', setBubbleAssistantBg),
               resetLabel: t('colorDefault')
@@ -1132,19 +1142,6 @@ function SettingsPage() {
       jsx(SettingsPanel, {
         title: t('panelGeneral'),
         rows: [
-          jsx(SettingsRow, {
-            key: 'focusGuard',
-            title: t('focusLabel'),
-            hint: t('focusHint'),
-            control: jsx(SegmentedControl, {
-              value: focusGuard,
-              onChange: pickFocusGuard,
-              options: [
-                { id: 'guard', label: t('focusHandsOff') },
-                { id: 'follow', label: t('focusFollowMouse') }
-              ]
-            })
-          }),
           jsx(SettingsRow, {
             key: 'language',
             title: t('languageLabel'),
@@ -1176,466 +1173,13 @@ function SettingsPage() {
   })
 }
 
-// ─── 输入对话框拖拽（弹窗式移动）────────────────────────────────────────────
-// 把手 = 对话框顶缘（grip 按钮 + 顶条 24px 带），按住拖动整个 composer-dock。
-// 与 app 自带 pop-out 手势分区共存：app 的 5px 抓取环只暴露在左右两条边，且
-// 其 pointerdown 对 button 一律让行；弹出态（data-popped-out）与 HUD 壳（自带
-// 窗口级拖拽）完全不接管。定位语义与 app pop-out 同款：fixed + bottom/right
-// 内缩（草稿长高向上扩，落点不漂移），双击把手回坞。
-// 三条通道各司其职，全程不扫描、不监听 app DOM：
-//   1) 事件委托：pointerdown 从事件目标 closest 出把手，只认领把手区的按下；
-//   2) 落点写插件自有 CSS 变量 + data-codex-float，边界钳制交给规则里的
-//      clamp() —— 视口实时、高度随 --composer-measured-height 走，换屏/长草稿
-//      都不会溢出视口；
-//   3) 位置保留按面板锚点（data-session-anchor）生成恢复规则，重挂载的
-//      composer 靠 CSS 自己找回落点。落点用完即弃（双击回坞）不留状态。
-
-const DRAG_HANDLE_ZONE_PX = 12
-const DRAG_THRESHOLD_PX = 3
-const DRAG_CLICK_SWALLOW_MS = 400
-const DRAG_CLICK_REPLAY_MS = 250
-const DRAG_SWALLOW_RADIUS_PX = 32
-const DRAG_POS_KEY = 'composerDragPositions'
-const DRAG_POS_CAP = 12
-const DRAG_STYLE_ID = 'codex-theme-composer-drag'
-const DRAG_GRIP_SELECTOR = '[data-slot="status-drawer-toggle"]'
-const DRAG_INTERACTIVE_SELECTOR =
-  'button, a, input, textarea, select, [contenteditable]:not([contenteditable="false"]), ' +
-  '[data-slot="composer-rich-input"], [role="menuitem"], [data-radix-popper-content-wrapper]'
-
-// 行为 CSS（浮动定位、把手 grab、拖动态 grabbing、:is(*,*) 瞬态）：不进主题
-// customCSS，统一住在插件自有 style#codex-theme-composer-drag 里随插件生死 ——
-// 非 Codex 主题下拖拽不再撕裂，主题切换/卸载零残留。外观阴影继续引用主题的
-// --codex-shadow-*。
-const DRAG_BEHAVIOR_CSS = `/* data-codex-float：脱坞后的 fixed 定位 —— bottom/right 内缩 + 冻结宽度，
-   与 app pop-out 同一套落点语义（草稿长高向上扩，落点不漂移）。
-   :not([data-popped-out]) 把 app 自己的弹出态整段让位，两套定位永不叠加。 */
-[data-slot='composer-dock'][data-codex-float]:not([data-popped-out]) {
-  position: fixed;
-  left: auto;
-  translate: none;
-  right: clamp(8px, var(--codex-float-right), calc(100vw - var(--codex-float-width) - 8px));
-  bottom: clamp(8px, var(--codex-float-bottom), calc(100vh - var(--composer-measured-height, 4.5rem) - 8px));
-  width: var(--codex-float-width);
-  max-width: calc(100vw - 1rem);
-}
-
-/* 把手：顶缘 grip 按钮即拖动把手（单击仍是状态抽屉开关，按住拖动才移动） */
-[data-slot='status-drawer-toggle'] {
-  cursor: grab;
-}
-
-/* 拖动中：全局 grabbing 光标 + 禁选，避免拖过输入区拉出文本选区 */
-html[data-codex-composer-drag],
-html[data-codex-composer-drag] :is(*, *::before, *::after) {
-  cursor: grabbing;
-}
-html[data-codex-composer-drag] :is(*, *::before, *::after) {
-  user-select: none !important;
-}
-
-/* 拖动态抬升：用纯 elevation 的 --codex-shadow-composer-focus（与聚焦态同一语言；
-   --codex-shadow-dialog 尾层带 1px ring，会与 1px 实边框叠成双发丝线） */
-html[data-codex-composer-drag] [data-slot='composer-surface'] {
-  box-shadow: var(--codex-shadow-composer-focus) !important;
-}`
-
-// 与 DRAG_BEHAVIOR_CSS 的 [data-codex-float] 规则同一套声明（含 8px 边距的 clamp），
-// 按锚点生成恢复规则时内联进规则本体，让落点找回不需要任何 JS 接触 DOM。
-const DRAG_MECHANICS =
-  'position:fixed;left:auto;translate:none;' +
-  'right:clamp(8px,var(--codex-float-right),calc(100vw - var(--codex-float-width) - 8px));' +
-  'bottom:clamp(8px,var(--codex-float-bottom),calc(100vh - var(--composer-measured-height,4.5rem) - 8px));' +
-  'width:var(--codex-float-width);max-width:calc(100vw - 1rem);'
-
-let dragSession = null
-let dragSwallowClicksUntil = 0
-let dragSwallowPoint = null
-let dragGripClickTimer = null
-let dragGripClickEl = null
-let dragReplayingClick = false
-
-const dragClamp = (value, lo, hi) => Math.min(Math.max(value, lo), Math.max(lo, hi))
-
-// fixed 定位的包含块是布局视口：right/bottom 内缩必须对 clientWidth/Height
-// 算，window.innerWidth 含滚动条宽度会整段偏移一个滚动条位。
-function dragViewport() {
-  return {
-    height: document.documentElement.clientHeight || window.innerHeight,
-    width: document.documentElement.clientWidth || window.innerWidth
-  }
-}
-
-function dragAnchor(dock) {
-  return dock.closest('[data-chat-surface]')?.dataset.sessionAnchor || null
-}
-
-function dragSavedPositions() {
-  const raw = storage ? storage.get(DRAG_POS_KEY, null) : null
-  return raw && typeof raw === 'object' ? raw : {}
-}
-
-function dragCssString(value) {
-  return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, ' ')
-}
-
-// 恢复规则集整体重渲染：锚点数量个位数，整段替换比逐条增删更不易留脏规则。
-// 行为 CSS 与恢复规则同格渲染（双通道永不撕裂）；元素按需生成 —— 有落点记录
-// 或开始拖动时才进 DOM，卸载即移除。
-function dragCreateStyle() {
-  const el = document.createElement('style')
-  el.id = DRAG_STYLE_ID
-  document.head.appendChild(el)
-  return el
-}
-
-function dragRenderRules() {
-  const rules = Object.entries(dragSavedPositions())
-    .filter(([, p]) => p && [p.bottom, p.right, p.width].every(Number.isFinite))
-    .map(
-      ([anchor, p]) =>
-        `[data-chat-surface][data-session-anchor='${dragCssString(anchor)}'] ` +
-        `[data-slot='composer-dock']:not([data-popped-out]){` +
-        `--codex-float-bottom:${p.bottom}px;--codex-float-right:${p.right}px;--codex-float-width:${p.width}px;` +
-        DRAG_MECHANICS +
-        `}`
-    )
-    .join('\n')
-  const existing = document.getElementById(DRAG_STYLE_ID)
-  if (!existing && !rules) return
-  const el = existing || dragCreateStyle()
-  const next = rules ? `${DRAG_BEHAVIOR_CSS}\n${rules}` : DRAG_BEHAVIOR_CSS
-  if (el.textContent !== next) el.textContent = next
-}
-
-function dragEnsureStyle() {
-  if (!document.getElementById(DRAG_STYLE_ID)) {
-    dragCreateStyle()
-    dragRenderRules()
-  }
-}
-
-function dragSavePosition(anchor, placement) {
-  if (!storage || !anchor) return
-  const all = dragSavedPositions()
-  all[anchor] = { bottom: placement.bottom, right: placement.right, t: Date.now(), width: placement.width }
-  const keys = Object.keys(all)
-  const stale = keys.sort((a, b) => (all[a].t || 0) - (all[b].t || 0)).slice(0, Math.max(0, keys.length - DRAG_POS_CAP))
-  for (const key of stale) delete all[key]
-  storage.set(DRAG_POS_KEY, all)
-  dragRenderRules()
-}
-
-function dragForgetPosition(anchor) {
-  if (!storage || !anchor) return
-  const all = dragSavedPositions()
-  if (!(anchor in all)) return
-  delete all[anchor]
-  storage.set(DRAG_POS_KEY, all)
-  dragRenderRules()
-}
-
-// 落点整盒钳进视口（留白 8px，与 DRAG_MECHANICS 的 clamp 同界）：存的是
-// 渲染态的最终落点，恢复后原样复现。
-function dragClampPlacement(placement, height) {
-  const vp = dragViewport()
-  return {
-    bottom: dragClamp(placement.bottom, 8, vp.height - height - 8),
-    right: dragClamp(placement.right, 8, vp.width - placement.width - 8),
-    width: placement.width
-  }
-}
-
-// 脱坞中的 dock 集合：卸载时逐个回坞（宿主不提供 querySelectorAll 时的保底依据）。
-const dragFloated = new Set()
-
-function dragApply(dock, placement) {
-  dock.style.setProperty('--codex-float-bottom', placement.bottom + 'px')
-  dock.style.setProperty('--codex-float-right', placement.right + 'px')
-  dock.style.setProperty('--codex-float-width', placement.width + 'px')
-  dock.setAttribute('data-codex-float', '')
-  dragFloated.add(dock)
-}
-
-function dragClear(dock) {
-  dock.removeAttribute('data-codex-float')
-  dock.style.removeProperty('--codex-float-bottom')
-  dock.style.removeProperty('--codex-float-right')
-  dock.style.removeProperty('--codex-float-width')
-  dragFloated.delete(dock)
-}
-
-function dragFindTarget(event) {
-  if (event.button !== 0) return null
-  const el = event.target instanceof Element ? event.target : null
-  if (!el) return null
-  const root = el.closest('[data-slot="composer-root"]')
-  if (!root || root.hasAttribute('data-popped-out')) return null
-  if (root.closest('[data-hud-shell]')) return null
-  const dock = root.closest('[data-slot="composer-dock"]')
-  if (!dock || dock.hasAttribute('data-popped-out')) return null
-  if (!el.closest(DRAG_GRIP_SELECTOR)) {
-    if (el.closest(DRAG_INTERACTIVE_SELECTOR)) return null
-    const rect = root.getBoundingClientRect()
-    if (
-      rect.width <= 0 ||
-      event.clientX < rect.left - 4 ||
-      event.clientX > rect.right + 4 ||
-      event.clientY < rect.top - DRAG_HANDLE_ZONE_PX ||
-      event.clientY > rect.top + DRAG_HANDLE_ZONE_PX
-    ) {
-      return null
-    }
-  }
-  return { dock, root }
-}
-
-function dragFlush(session) {
-  const pending = session.pending
-  if (!pending) return
-  session.pending = null
-  const rect = session.rect
-  const vp = dragViewport()
-  // 原始位移直写：渲染钳制在规则的 clamp() 里做，回拖不带边界粘滞。
-  session.placement = {
-    bottom: vp.height - rect.bottom - pending.dy,
-    right: vp.width - rect.right - pending.dx,
-    width: rect.width
-  }
-  dragApply(session.dock, session.placement)
-}
-
-function dragSchedule(session) {
-  if (session.raf !== null) return
-  session.raf = requestAnimationFrame(() => {
-    session.raf = null
-    dragFlush(session)
-  })
-}
-
-function dragOnPointerDown(event) {
-  const target = dragFindTarget(event)
-  if (!target) return
-  dragEnsureStyle()
-  dragCancelGripClick()
-  const rect = target.dock.getBoundingClientRect()
-  if (rect.width <= 0 || rect.height <= 0) return
-  dragSession = {
-    captureEl: event.target instanceof Element ? event.target : target.root,
-    dock: target.dock,
-    moved: false,
-    pending: null,
-    placement: null,
-    pointerId: event.pointerId,
-    raf: null,
-    rect,
-    startX: event.clientX,
-    startY: event.clientY
-  }
-  // 把手区的按下整段认领：app 表单上的 pop-out 手势与草稿同步都看不到它，
-  // 单击（无位移）不受影响 —— grip 的开关点击照常走 click。
-  event.stopPropagation()
-  dragSession.captureEl.setPointerCapture?.(event.pointerId)
-}
-
-function dragOnPointerMove(event) {
-  const session = dragSession
-  if (!session || event.pointerId !== session.pointerId) return
-  const dx = event.clientX - session.startX
-  const dy = event.clientY - session.startY
-  if (!session.moved) {
-    if (Math.abs(dx) < DRAG_THRESHOLD_PX && Math.abs(dy) < DRAG_THRESHOLD_PX) return
-    session.moved = true
-    document.documentElement.setAttribute('data-codex-composer-drag', '')
-  }
-  event.preventDefault()
-  session.pending = { dx, dy }
-  dragSchedule(session)
-}
-
-function dragEnd(event) {
-  const session = dragSession
-  if (!session || (event && event.pointerId !== session.pointerId)) return
-  if (session.raf !== null) {
-    cancelAnimationFrame(session.raf)
-    session.raf = null
-  }
-  dragFlush(session)
-  dragSession = null
-  document.documentElement.removeAttribute('data-codex-composer-drag')
-  if (session.moved && event && event.type === 'pointerup') {
-    // 位移过的按下收尾必带一次 click（落在把手上会误触抽屉开关）——吞掉。
-    // 只有真正的 pointerup 才会派发收尾 click：pointercancel / blur / capture
-    // 元素卸载这三条路径不带 click，不开吞噬窗（否则误吞用户随后的真实点击）。
-    // 吞噬范围另收紧到把手区/松手坐标附近，见 dragInSwallowRegion。
-    dragSwallowClicksUntil = performance.now() + DRAG_CLICK_SWALLOW_MS
-    dragSwallowPoint = { x: event.clientX, y: event.clientY }
-  } else {
-    dragSwallowClicksUntil = 0
-    dragSwallowPoint = null
-  }
-  if (session.moved) {
-    // 存渲染态的最终落点（clamp 后），恢复后与松手时逐像素一致。
-    // 换算与 dragFlush 同用 dragViewport()（布局视口）：window.innerWidth 含
-    // 滚动条宽，混用会把落点整体偏移一个滚动条宽并写进持久化。
-    const rect = session.dock.getBoundingClientRect()
-    const vp = dragViewport()
-    const placement = dragClampPlacement(
-      { bottom: vp.height - rect.bottom, right: vp.width - rect.right, width: rect.width },
-      rect.height
-    )
-    dragApply(session.dock, placement)
-    dragSavePosition(dragAnchor(session.dock), placement)
-  }
-  const el = session.captureEl
-  if (el?.hasPointerCapture?.(session.pointerId)) el.releasePointerCapture(session.pointerId)
-}
-
-// 吞噬范围：把手区（收尾 click 被 pointer capture 定向到这里）或松手坐标 32px 内。
-// 范围外的点击是用户真实点击，一律放行。
-function dragInSwallowRegion(event) {
-  const el = event.target instanceof Element ? event.target : null
-  if (el && el.closest(DRAG_GRIP_SELECTOR)) return true
-  const p = dragSwallowPoint
-  return (
-    !!p &&
-    Math.abs(event.clientX - p.x) <= DRAG_SWALLOW_RADIUS_PX &&
-    Math.abs(event.clientY - p.y) <= DRAG_SWALLOW_RADIUS_PX
-  )
-}
-
-function dragScheduleGripClick(grip) {
-  clearTimeout(dragGripClickTimer)
-  dragGripClickEl = grip
-  dragGripClickTimer = setTimeout(() => {
-    dragGripClickTimer = null
-    const el = dragGripClickEl
-    dragGripClickEl = null
-    if (!el || !el.isConnected) return
-    dragReplayingClick = true
-    try {
-      el.click()
-    } finally {
-      dragReplayingClick = false
-    }
-  }, DRAG_CLICK_REPLAY_MS)
-}
-
-function dragCancelGripClick() {
-  clearTimeout(dragGripClickTimer)
-  dragGripClickTimer = null
-  dragGripClickEl = null
-}
-
-function dragOnClickCapture(event) {
-  if (performance.now() < dragSwallowClicksUntil) {
-    if (!dragInSwallowRegion(event)) return
-    dragSwallowClicksUntil = 0
-    dragSwallowPoint = null
-    event.preventDefault()
-    event.stopPropagation()
-    return
-  }
-  if (dragReplayingClick) return
-  const el = event.target instanceof Element ? event.target : null
-  const grip = el && typeof el.closest === 'function' ? el.closest(DRAG_GRIP_SELECTOR) : null
-  if (!grip) return
-  // 把手「单击开关」延迟 250ms 放行：双击回坞的第二击紧随其后，dblclick 一到
-  // 就撤销（dragCancelGripClick），避免单击开关被连发两次造成开-关闪烁。
-  event.preventDefault()
-  event.stopPropagation()
-  dragScheduleGripClick(grip)
-}
-
-function dragOnDoubleClick(event) {
-  const target = dragFindTarget(event)
-  if (!target) return
-  dragCancelGripClick()
-  dragClear(target.dock)
-  dragForgetPosition(dragAnchor(target.dock))
-}
-
-function installComposerDrag(ctx) {
-  ctx.addEventListener(document, 'pointerdown', dragOnPointerDown, true)
-  ctx.addEventListener(window, 'pointermove', dragOnPointerMove)
-  ctx.addEventListener(window, 'pointerup', dragEnd)
-  ctx.addEventListener(window, 'pointercancel', dragEnd)
-  ctx.addEventListener(document, 'lostpointercapture', dragEnd, true)
-  ctx.addEventListener(window, 'blur', () => dragEnd(null))
-  ctx.addEventListener(document, 'click', dragOnClickCapture, true)
-  ctx.addEventListener(document, 'dblclick', dragOnDoubleClick, true)
-
-  // 已保存的落点在注册时就渲染成恢复规则：composer 何时挂载都能自己找回。
-  dragRenderRules()
-
-  ctx.onDispose(() => {
-    dragCancelGripClick()
-    dragEnd(null)
-    for (const dock of [...dragFloated]) dragClear(dock)
-    // 兜底再扫一遍脱坞标记（宿主缺 querySelectorAll 时上面的自持集合已覆盖）
-    document.querySelectorAll?.('[data-codex-float]')?.forEach(dragClear)
-    document.getElementById(DRAG_STYLE_ID)?.remove()
-  })
-}
-
-// ─── 输入框焦点守卫（防抢占）─────────────────────────────────────────────
-// 抢焦源头在 app 自己的 focus-follow（hermes-agent apps/desktop/src/app/chat/
-// composer/floating-target.ts）：pointermove / focusin 派发里把焦点拉回输入框，
-// 焦点被抢后 focusComposerInput（focus.ts）还会排 rAF + setTimeout(0) 两次重试。
-// 拦截指纹取「派发现场」而不是猜意图：window.event 类型为 pointermove / focusin
-// 时对输入框的 focus() 必是抢焦；其余派发上下文（click/keydown/…）和空上下文
-// （启动初始聚焦、切会话回焦）一律放行。浏览器原生点击聚焦不走 focus()，
-// 完全不受影响。抢焦被拦后 app 的两次空上下文重试，在重试窗内对同一元素
-// 一并压掉；任何用户手势（pointerdown/keydown）一到就提前关窗。
-const FOCUS_GUARD_EDITOR_SLOT = 'composer-rich-input'
-const FOCUS_GUARD_STEAL_EVENTS = new Set(['pointermove', 'focusin'])
-const FOCUS_GUARD_RETRY_WINDOW_MS = 250
-
-function installFocusGuard(ctx) {
-  const proto = typeof HTMLElement === 'undefined' ? null : HTMLElement.prototype
-  if (!proto || typeof proto.focus !== 'function') return
-  const original = proto.focus
-  const now = () => (typeof performance === 'undefined' ? Date.now() : performance.now())
-  let live = true
-  let retry = null
-  let wrapped = null
-
-  wrapped = function (...args) {
-    const el = this
-    const isEditor = Boolean(el && el.dataset && el.dataset.slot === FOCUS_GUARD_EDITOR_SLOT)
-    const eventType = typeof window === 'undefined' || !window.event ? '' : window.event.type
-    if (live && isEditor && getPref('focusGuard') === 'guard') {
-      if (FOCUS_GUARD_STEAL_EVENTS.has(eventType)) {
-        retry = { el, until: now() + FOCUS_GUARD_RETRY_WINDOW_MS }
-        return undefined
-      }
-      if (!eventType && retry && retry.el === el && now() <= retry.until) return undefined
-    }
-    return original.apply(el, args)
-  }
-  proto.focus = wrapped
-
-  const clearRetry = () => {
-    retry = null
-  }
-  ctx.addEventListener(document, 'pointerdown', clearRetry, true)
-  ctx.addEventListener(document, 'keydown', clearRetry, true)
-
-  ctx.onDispose(() => {
-    live = false
-    retry = null
-    if (proto.focus === wrapped) proto.focus = original
-    wrapped = null
-  })
-}
-
 // ─── 插件入口 ─────────────────────────────────────────────────────────────────
 
 export default {
   id: ID,
   name: 'Codex Theme',
   // 面板描述的唯一来源（desktop 契约无 version/author 字段，尾注与 plugin.yaml 的 version/author 同步）
-  description: 'Codex × ChatGPT inspired theme for the Hermes Desktop chat — dual light/dark palettes that follow the system appearance, graphite-on-paper typography with a 1.4286 root line height and content-spacing presets (1.3/1.4286/1.55), the OpenAI radius scale (inline 4px / rows 8px / controls 10px / cards 12px / composer 20px), hairline borders, and a bilingual Settings page (appearance mode, 768/880/992px reading width, text & code font presets, user/assistant chat bubble colors, input focus guard (hands-off / follow-mouse), zh/en language, GitHub Issues feedback). (v1.1.0 · hey-yx)',
+  description: 'Codex × ChatGPT inspired theme for the Hermes Desktop chat — dual light/dark palettes that follow the system appearance, graphite-on-paper typography with a 1.625 root line height (aligned to ZCode) and content-spacing presets (1.5/1.625/1.75), the OpenAI radius scale (inline 4px / rows 8px / controls 10px / cards 12px / composer 20px), hairline borders, and a bilingual Settings page (appearance mode, 768/880/992px reading width, text & code font presets, user/assistant chat bubble colors, zh/en language, GitHub Issues feedback). (v1.2.0 · hey-yx)',
   register(ctx) {
     storage = ctx.storage
     pluginOs = ctx.os || null
@@ -1654,11 +1198,8 @@ export default {
     }
     applyPrefs()
     ctx.onDispose(clearDatasetPrefs)
-    installComposerDrag(ctx)
-    installFocusGuard(ctx)
-
     // 装载确认（热重载/启动排查的地面真值，见 desktop.log）
-    console.log('[codex-theme] register ok v1.1.0')
+    console.log('[codex-theme] register ok v1.2.0')
 
     // 注册期文案（主题名/描述、⌘K 标签、设置页标题）随语言重建：
     // 主题本体（外观设置网格 / ⌘K / /skin 皆可见）、设置 → 插件 → Codex Theme、⌘K 入口。

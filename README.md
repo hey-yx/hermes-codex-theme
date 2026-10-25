@@ -40,8 +40,8 @@ the plugin says to you.
   dark) is reserved for interaction, never chrome
 - **OpenAI radius scale** — inline code 4px · sidebar rows 8px · controls 10px ·
   cards, bubbles, menus and dialogs 12px · composer 20px
-- **Content spacing presets** — Compact 1.3 / Comfortable 1.4286 (default) /
-  Roomy 1.55 line height, with paragraph and bubble padding scaled to match
+- **Content spacing presets** — Compact 1.5 / Comfortable 1.625 (default) /
+  Roomy 1.75 line height, with paragraph and bubble padding scaled to match
 - **768 / 880 / 992px reading width** — Compact / Comfortable (default) /
   Roomy, wider than ChatGPT's 720–768px
 - **Text & code font presets** — body text (Default / Serif / Mono) and code
@@ -49,13 +49,6 @@ the plugin says to you.
   Chinese/English text renders well; *Default* never overrides your font setup
 - **Chat bubble colors** — pick background and text colors for your own bubbles
   and for assistant replies; *Default* keeps the theme's own look
-- **Draggable composer** — hold the composer's top edge to float it anywhere
-  in the viewport (clamped on screen, a growing draft never drifts the spot);
-  double-click the handle to dock it back, and every panel remembers its own
-  drop spot
-- **Input focus, hands off** — the input box stops pulling focus back when the
-  pointer moves over the chat area or you click outside; *Follow mouse* keeps
-  the old behavior if you want it
 - **English / 中文 interface** — follows the system & app language by default,
   or pin one in Settings; every label, hint and popup is localized
 - **Feedback in one click** — Settings carries a *Open GitHub Issues* button
@@ -82,7 +75,7 @@ the plugin says to you.
 | Interaction-only blue | `#0285FF` light / `#339CFF` dark for links, focus rings, selection |
 | Hairline borders | 1px strokes (`#E7E7E7` / `#2A2A2A`) instead of shadows; surfaces stay flat |
 | Radius scale | 4px inline · 8px rows · 10px controls · 12px cards/bubbles/dialogs · 20px composer |
-| Line height | Root 1.4286 — 14px body on a 20px rhythm (aligned to ZCode); spacing presets 1.3 / 1.4286 / 1.55 |
+| Line height | Root 1.625 — measured from ZCode's chat body (14px × leading-relaxed); spacing presets 1.5 / 1.625 / 1.75 |
 | Reading width | 880px default · presets 768 / 880 / 992px (ChatGPT: 720–768px) |
 
 ### Palettes
@@ -98,7 +91,7 @@ the plugin says to you.
 
 ## Install
 
-Once listed in the [plugin catalog](https://hermes-agent.nousresearch.com/docs/plugins):
+Listed in the official [plugin catalog](https://hermes-agent.nousresearch.com/docs/plugins):
 
 ```bash
 hermes plugins install codex-theme
@@ -127,14 +120,13 @@ Everything lives in **Settings → Plugins → Codex Theme**, grouped into
 |---|---|---|
 | Appearance mode | Follow system / Dark / Light | Follows the system appearance by default |
 | Reading width | Compact (768px) / Comfortable (880px, default) / Roomy (992px) | Theme-level knob; Hermes has no built-in width setting |
-| Content spacing | Compact (1.3) / Comfortable (1.4286, default) / Roomy (1.55) | Line height + paragraph & bubble rhythm |
+| Content spacing | Compact (1.5) / Comfortable (1.625, default) / Roomy (1.75) | Line height + paragraph & bubble rhythm |
 | Text font | Default / Serif / Mono | Chinese fallbacks in every preset; *Default* keeps theme/app fonts |
 | Code font | Default / Fira Code / Courier | Fira Code / JetBrains Mono must be installed locally — otherwise the system mono kicks in |
 | User bubble background | Color picker + *Default* | *Default*: theme gray (#F3F3F3 light / #202020 dark) |
 | User bubble text | Color picker + *Default* | *Default*: theme foreground |
 | Assistant bubble background | Color picker + *Default* | *Default*: transparent — replies sit straight on the canvas |
 | Assistant bubble text | Color picker + *Default* | *Default*: theme foreground |
-| Input focus | Hands off (default) / Follow mouse | Whether the input box pulls focus back when the pointer moves over the chat area or you click outside; “Hands off” only focuses the input at app start, on a new session, or when you click or type into it |
 | Language | Follow system / 中文 / English | Plugin UI only; Hermes' own language is untouched |
 | Feedback | *Open GitHub Issues* | Opens the repo's Issues page in your browser |
 
@@ -180,8 +172,7 @@ to know before installing:
   external action in the plugin, and only when you press the button.
 - **Storage:** one plugin-scoped store (`ctx.storage`) holding your
   settings-page choices — appearance mode, reading width, content spacing,
-  fonts, chat bubble colors, input focus and language — plus the composer's
-  remembered drag spots and a first-install flag.
+  fonts, chat bubble colors and language — plus a first-install flag.
 - **Styling:** the theme's `customCSS` is injected as a scoped style block by
   the app's own theme engine, exactly like user skins; it changes visuals, never
   behavior.

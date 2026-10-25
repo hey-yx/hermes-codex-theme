@@ -3,68 +3,127 @@
 <head>
 <meta charset="utf-8">
 <style>
+  /* Hallmark · macrostructure: Split Canvas · theme: graphite-on-paper (brand-locked)
+     tokens: OpenAI Codex palette · hairline borders · radius scale 8/10/12/20 */
+  :root {
+    --ink-dark: #181818;
+    --paper: #ffffff; --paper-2: #f7f7f7;
+    --card-dark: #212121;
+    --border-dark: #2a2a2a; --border-light: #e7e7e7;
+    --fg-dark: #f5f5f5; --fg-light: #1a1a1a;
+    --muted-dark: #9b9b9b; --muted-light: #6f6f6f;
+    --blue: #339cff; --blue-light: #0285ff;
+    --bubble-dark: #202020; --bubble-light: #f3f3f3;
+    --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     width: 1200px; height: 600px; overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
-    background: #181818; color: #f5f5f5;
+    font-family: var(--sans);
     display: flex;
   }
-  .left { flex: 1.3; padding: 56px 56px; display: flex; flex-direction: column; justify-content: center; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
-    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: #339CFF; border: 1px solid rgba(51,156,255,0.35); border-radius: 999px;
-    padding: 6px 14px; margin-bottom: 28px;
+  /* ── 左:石墨纸面(细点网格呼应 graphite-on-paper)── */
+  .left {
+    flex: 1.25; padding: 60px 52px 52px 60px;
+    display: flex; flex-direction: column; justify-content: center;
+    background:
+      radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1.5px) 0 0 / 24px 24px,
+      linear-gradient(165deg, #1a1a1a 0%, #181818 100%);
+    color: var(--fg-dark);
   }
-  .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: #339CFF; }
-  h1 { font-size: 64px; line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
-  h1 .accent { color: #339CFF; }
-  .sub { margin-top: 18px; font-size: 21px; line-height: 1.5; color: #b9b9b9; max-width: 30em; }
-  .pills { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; max-width: 560px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 9px; align-self: flex-start;
+    font-size: 12.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--blue); border: 1px solid rgba(51,156,255,0.32); border-radius: 999px;
+    padding: 7px 15px; margin-bottom: 30px;
+  }
+  .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+  h1 { font-size: 66px; line-height: 1.04; font-weight: 700; letter-spacing: -0.022em; color: #fff; }
+  h1 .accent { color: var(--blue); }
+  .sub { margin-top: 18px; font-size: 20px; line-height: 1.55; color: #b9b9b9; max-width: 30em; }
+  .sub b { color: #e8e8e8; font-weight: 500; }
+  .pills { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; max-width: 570px; }
   .pill {
-    font-size: 14px; color: #dedede; background: #232323;
-    border: 1px solid #2a2a2a; border-radius: 10px; padding: 8px 14px;
+    font-size: 13.5px; color: #dedede; background: rgba(255,255,255,0.045);
+    border: 1px solid var(--border-dark); border-radius: 10px; padding: 8px 14px;
     white-space: nowrap;
   }
-  .swatches { margin-top: 36px; display: flex; gap: 16px; align-items: flex-start; }
+  .swatches { margin-top: 34px; display: flex; gap: 18px; align-items: flex-start; }
   .sw-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .sw { width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); }
-  .sw-item span { font-size: 9px; color: #8a8a8a; letter-spacing: 0.04em; }
-  .right {
-    flex: 1; padding: 48px 44px; display: flex; align-items: center;
-    background: linear-gradient(160deg, #1c1c1c 0%, #181818 100%);
-    border-left: 1px solid #2a2a2a;
+  .sw { width: 42px; height: 42px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.13); }
+  .sw-item span { font-size: 9.5px; color: #8a8a8a; letter-spacing: 0.04em; font-family: var(--mono); }
+  /* ── 右:亮暗双卡,一张图讲清「双配色随系统」── */
+  .duo {
+    flex: 1; display: flex; align-items: stretch;
+    border-left: 1px solid var(--border-dark);
   }
-  .card {
-    width: 100%; background: #212121; border: 1px solid #2a2a2a;
-    border-radius: 16px; padding: 24px 26px;
+  .pane {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    padding: 44px 26px; gap: 14px; position: relative;
   }
-  .card .row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .pane.light { background: linear-gradient(170deg, #fdfdfd 0%, #f4f4f4 100%); color: var(--fg-light); }
+  .pane.dark  { background: linear-gradient(170deg, #1b1b1b 0%, #171717 100%); color: var(--fg-dark); }
+  .pane + .pane { border-left: 1px solid rgba(128,128,128,0.28); }
+  .pane-label {
+    position: absolute; top: 20px; left: 26px;
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .pane.light .pane-label { color: var(--muted-light); }
+  .pane.dark  .pane-label { color: var(--muted-dark); }
+  .mode { width: 8px; height: 8px; border-radius: 50%; }
+  .pane.light .mode { background: var(--blue-light); }
+  .pane.dark  .mode { background: var(--blue); }
+  .mini { border-radius: 12px; padding: 16px 16px 14px; }
+  .pane.light .mini { background: var(--paper); border: 1px solid var(--border-light); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .pane.dark  .mini { background: var(--ink-dark); border: 1px solid var(--border-dark); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
   .bubble {
-    background: #202020; border: none; border-radius: 12px;
-    padding: 10px 14px; font-size: 14px; line-height: 20px; color: #e8e8e8;
+    width: fit-content; border-radius: 12px; padding: 8px 12px;
+    font-size: 12.5px; line-height: 18px; margin-left: auto; max-width: 90%;
   }
-  .bubble.me { margin-left: 42px; }
-  .flat { font-size: 14px; line-height: 20px; color: #dcdcdc; }
-  .flat .h { color: #fff; font-weight: 600; }
-  .flat .m { color: #8f8f8f; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; }
-  .bar { display: flex; gap: 8px; margin-top: 20px; }
-  .chip { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9b9b9b; background: #242424; border: 1px solid #2a2a2a; border-radius: 8px; padding: 6px 10px; }
-  .chip.blue { color: #339CFF; border-color: rgba(51,156,255,0.4); }
+  .pane.light .bubble { background: var(--bubble-light); color: var(--fg-light); }
+  .pane.dark  .bubble { background: var(--bubble-dark); color: var(--fg-dark); }
+  .reply { margin-top: 12px; font-size: 12.5px; line-height: 19px; }
+  .reply .h { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .pane.light .reply .h { color: #111; }
+  .pane.dark  .reply .h { color: #fff; }
+  .pane.light .reply p { color: #2c2c2c; }
+  .pane.dark  .reply p { color: #dcdcdc; }
+  .reply code {
+    font-family: var(--mono); font-size: 0.88em; padding: 0.08em 0.3em; border-radius: 4px;
+  }
+  .pane.light .reply code { background: rgba(0,0,0,0.055); }
+  .pane.dark  .reply code { background: rgba(255,255,255,0.07); }
+  .tool {
+    margin-top: 12px; font-family: var(--mono); font-size: 10.5px; display: flex; align-items: center; gap: 6px;
+  }
+  .pane.light .tool { color: var(--muted-light); }
+  .pane.dark  .tool { color: var(--muted-dark); }
+  .tool .tick { color: var(--blue-light); }
+  .pane.dark .tool .tick { color: var(--blue); }
+  .composer {
+    margin-top: 14px; display: flex; align-items: center; justify-content: space-between;
+    border-radius: 20px; padding: 9px 14px; font-size: 12px;
+  }
+  .pane.light .composer { background: var(--paper-2); border: 1px solid var(--border-light); color: #9a9a9a; }
+  .pane.dark  .composer { background: #242424; border: 1px solid var(--border-dark); color: #7c7c7c; }
+  .send { width: 18px; height: 18px; border-radius: 6px; }
+  .pane.light .send { background: var(--blue-light); }
+  .pane.dark  .send { background: var(--blue); }
 </style>
 </head>
 <body>
   <div class="left">
     <div class="badge"><span class="dot"></span>Hermes Desktop Plugin</div>
     <h1>Codex <span class="accent">Theme</span></h1>
-    <div class="sub">A graphite-on-paper theme for the Hermes Desktop chat,<br>after the design language of OpenAI Codex &amp; ChatGPT.</div>
+    <div class="sub">A graphite-on-paper theme for the Hermes Desktop chat,<br>after the design language of <b>OpenAI Codex &amp; ChatGPT</b>.</div>
     <div class="pills">
-      <div class="pill">Light / Dark · follows system</div>
+      <div class="pill">Light / dark · follows system</div>
       <div class="pill">OpenAI radius scale</div>
       <div class="pill">Hairline borders</div>
-      <div class="pill">Spacing · fonts · 中文/EN</div>
-      <div class="pill">880px column · 20px rhythm</div>
+      <div class="pill">Fonts · bubbles · 中文/EN</div>
+      <div class="pill">880px column · 1.625 rhythm</div>
     </div>
     <div class="swatches">
       <div class="sw-item"><div class="sw" style="background:#181818"></div><span>#181818</span></div>
@@ -75,20 +134,30 @@
       <div class="sw-item"><div class="sw" style="background:#0285FF"></div><span>#0285FF</span></div>
     </div>
   </div>
-  <div class="right">
-    <div class="card">
-      <div class="row"><div class="bubble me">Make the chat feel like Codex.</div></div>
-      <div class="flat">
-        <div class="h">Graphite on paper</div>
-        <div style="margin-top:8px">Flat surfaces, hairline borders, weight-carried hierarchy.
-        Blue is reserved for interaction — never chrome.</div>
-        <div class="m" style="margin-top:14px">Ran 2 commands · plugin.js +40 −27 · 137ms</div>
+  <div class="duo">
+    <div class="pane light">
+      <div class="pane-label"><span class="mode"></span>Light</div>
+      <div class="mini">
+        <div class="bubble">How does it handle both palettes?</div>
+        <div class="reply">
+          <div class="h">Two hand-tuned palettes</div>
+          <p>Near-white canvas, hairline <code>#E7E7E7</code> borders, blue kept for interaction only.</p>
+        </div>
+        <div class="tool"><span class="tick">✓</span> theme-light.ts +18 −4 · 137ms</div>
       </div>
-      <div class="bar">
-        <div class="chip blue">follow system</div>
-        <div class="chip">dark</div>
-        <div class="chip">light</div>
+      <div class="composer"><span>Message Hermes…</span><span class="send"></span></div>
+    </div>
+    <div class="pane dark">
+      <div class="pane-label"><span class="mode"></span>Dark</div>
+      <div class="mini">
+        <div class="bubble">How does it handle both palettes?</div>
+        <div class="reply">
+          <div class="h">Two hand-tuned palettes</div>
+          <p>Near-black canvas, hairline <code>#2A2A2A</code> borders, blue kept for interaction only.</p>
+        </div>
+        <div class="tool"><span class="tick">✓</span> theme-dark.ts +18 −4 · 137ms</div>
       </div>
+      <div class="composer"><span>Message Hermes…</span><span class="send"></span></div>
     </div>
   </div>
 </body>
