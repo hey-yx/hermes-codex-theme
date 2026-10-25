@@ -3,53 +3,84 @@
 <head>
 <meta charset="utf-8">
 <style>
+  /* Hallmark · macrostructure: Rendered Specimen · theme: graphite-on-paper dark (brand-locked) */
+  :root {
+    --ink: #181818; --card: #212121; --bubble: #202020;
+    --border: #2a2a2a; --fg: #f5f5f5; --fg-2: #dcdcdc;
+    --muted: #8f8f8f; --faint: #6a6a6a; --blue: #339cff;
+    --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    width: 1200px; height: 720px; overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
-    background: #181818; color: #f5f5f5; display: flex; flex-direction: column;
-    padding: 56px 72px;
+    width: 1200px; height: 720px; overflow: hidden; position: relative;
+    font-family: var(--sans);
+    background: linear-gradient(175deg, #1a1a1a 0%, #171717 100%);
+    color: var(--fg); display: flex; flex-direction: column;
   }
-  .thread { width: 880px; margin: 0 auto; }
-  .meta { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; color: #8f8f8f; margin: 22px 0 6px; }
+  .thread { width: 880px; margin: 0 auto; padding-top: 52px; }
   .me {
-    background: #262626; border: 1px solid #2e2e2e; border-radius: 12px;
-    padding: 11px 16px; font-size: 15px; line-height: 1.55; width: fit-content; margin-left: auto; max-width: 80%;
+    background: var(--bubble); border-radius: 12px;
+    padding: 10px 14px; font-size: 14px; line-height: 20px;
+    width: fit-content; margin-left: auto; max-width: 80%;
   }
-  .flat { font-size: 15px; line-height: 1.7; color: #dcdcdc; margin-top: 20px; }
+  .flat { font-size: 14px; line-height: 21px; color: var(--fg-2); margin-top: 22px; }
   .flat h3 { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px; letter-spacing: -0.01em; }
-  .flat ul { margin: 10px 0 0 1.35em; }
-  .flat li { margin: 5px 0; }
-  code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.88em; background: rgba(255,255,255,0.05); padding: 0.08em 0.3em; border-radius: 3px; }
-  .tool { margin-top: 22px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; color: #8f8f8f; }
+  .code-card {
+    margin-top: 14px; border: 1px solid var(--border); border-radius: 12px;
+    background: #1d1d1d; overflow: hidden;
+  }
+  .code-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px; border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+  }
+  .code-head .lang { color: var(--blue); letter-spacing: 0.06em; }
+  .code-card pre {
+    padding: 12px 14px; font-family: var(--mono); font-size: 12.5px; line-height: 20px; color: var(--fg-2);
+  }
+  .code-card .c { color: var(--muted); }
+  .tool { margin-top: 16px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
   .tool b { color: #b9b9b9; font-weight: 500; }
-  .caption { position: absolute; bottom: 22px; left: 72px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #6a6a6a; }
+  .dock { position: absolute; bottom: 58px; left: 50%; translate: -50% 0; width: 880px; }
+  .composer {
+    display: flex; align-items: center; justify-content: space-between;
+    border: 1px solid var(--border); border-radius: 20px;
+    background: #242424; padding: 10px 16px;
+    font-size: 13px; color: #7c7c7c;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4), 0 6px 16px -4px rgba(0,0,0,0.45);
+  }
+  .composer .send { width: 20px; height: 20px; border-radius: 7px; background: var(--blue); }
+  .caption { position: absolute; bottom: 22px; left: 72px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
   .sw { position: absolute; bottom: 18px; right: 72px; display: flex; gap: 8px; }
   .sw div { width: 26px; height: 26px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.12); }
 </style>
 </head>
 <body>
   <div class="thread">
-    <div class="me">How does the dark palette behave?</div>
-    <div class="meta">Thought · 2s</div>
+    <div class="me">Show me the theme's building blocks.</div>
     <div class="flat">
       <h3>Graphite on paper — dark</h3>
       Near-black <code>#181818</code> canvas, surfaces lifted one step at a time
-      (<code>#212121</code> cards, <code>#262626</code> bubbles). Blue stays an
-      interaction colour only:
-      <ul>
-        <li>Focus rings, links, streaming cursor — <code>#339CFF</code></li>
-        <li>Borders are hairlines (<code>#2E2E2E</code>), never shadows</li>
-        <li>Hierarchy is carried by weight, not by hue</li>
-      </ul>
+      (<code>#212121</code> cards, <code>#202020</code> bubbles). Borders are
+      hairlines, never shadows; blue is kept for interaction only.
+      <div class="code-card">
+        <div class="code-head"><span>theme.css</span><span class="lang">CSS</span></div>
+        <pre>.canvas  { background: <span style="color:#339cff">#181818</span>; }
+.border  { border: 1px solid <span style="color:#339cff">#2A2A2A</span>; }
+.accent  { color: <span style="color:#339cff">#339CFF</span>; }  <span class="c">/* links · focus · streaming cursor */</span></pre>
+      </div>
       <div class="tool"><b>Ran 2 commands</b> · theme-dark.ts +18 −4 · 137ms</div>
     </div>
+  </div>
+  <div class="dock">
+    <div class="composer"><span>Message Hermes…</span><span class="send"></span></div>
   </div>
   <div class="caption">Codex Theme · dark palette (rendered)</div>
   <div class="sw">
     <div style="background:#181818"></div>
     <div style="background:#212121"></div>
-    <div style="background:#262626"></div>
+    <div style="background:#202020"></div>
     <div style="background:#339CFF"></div>
     <div style="background:#F5F5F5"></div>
   </div>
