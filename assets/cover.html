@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <style>
   /* Hallmark · macrostructure: Split Canvas · theme: graphite-on-paper (brand-locked)
-     tokens: OpenAI Codex palette · hairline borders · radius scale 8/10/12/20 */
+     tokens: OpenAI Codex palette · hairline borders · radius scale 8/10/12/20
+     v3 render: 1280x640 (GitHub social spec) · 左 580 / 双预览栏 700（每栏 350，双栏是主视觉）
+     pipeline: Google Chrome headless 2x + LANCZOS downscale + pixel gates */
   :root {
     --ink-dark: #181818;
     --paper: #ffffff; --paper-2: #f7f7f7;
@@ -19,13 +21,13 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    width: 1200px; height: 600px; overflow: hidden;
+    width: 1280px; height: 640px; overflow: hidden;
     font-family: var(--sans);
     display: flex;
   }
   /* ── 左:石墨纸面(细点网格呼应 graphite-on-paper)── */
   .left {
-    flex: 1.25; padding: 60px 52px 52px 60px;
+    width: 580px; flex: none; padding: 60px 44px 52px 60px;
     display: flex; flex-direction: column; justify-content: center;
     background:
       radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1.5px) 0 0 / 24px 24px,
@@ -34,41 +36,41 @@
   }
   .badge {
     display: inline-flex; align-items: center; gap: 9px; align-self: flex-start;
-    font-size: 12.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--blue); border: 1px solid rgba(51,156,255,0.32); border-radius: 999px;
-    padding: 7px 15px; margin-bottom: 30px;
+    padding: 7px 15px; margin-bottom: 28px;
   }
   .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
-  h1 { font-size: 66px; line-height: 1.04; font-weight: 700; letter-spacing: -0.022em; color: #fff; }
+  h1 { font-size: 71px; line-height: 1.04; font-weight: 700; letter-spacing: -0.022em; color: #fff; }
   h1 .accent { color: var(--blue); }
-  .sub { margin-top: 18px; font-size: 20px; line-height: 1.55; color: #b9b9b9; max-width: 30em; }
+  .sub { margin-top: 18px; font-size: 18px; line-height: 1.55; color: #b9b9b9; }
   .sub b { color: #e8e8e8; font-weight: 500; }
-  .pills { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; max-width: 570px; }
+  .pills { margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap; max-width: 476px; }
   .pill {
-    font-size: 13.5px; color: #dedede; background: rgba(255,255,255,0.045);
-    border: 1px solid var(--border-dark); border-radius: 10px; padding: 8px 14px;
+    font-size: 13px; color: #dedede; background: rgba(255,255,255,0.045);
+    border: 1px solid var(--border-dark); border-radius: 10px; padding: 7px 13px;
     white-space: nowrap;
   }
-  .swatches { margin-top: 34px; display: flex; gap: 18px; align-items: flex-start; }
+  .swatches { margin-top: 32px; display: flex; gap: 18px; align-items: flex-start; }
   .sw-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .sw { width: 42px; height: 42px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.13); }
-  .sw-item span { font-size: 9.5px; color: #8a8a8a; letter-spacing: 0.04em; font-family: var(--mono); }
-  /* ── 右:亮暗双卡,一张图讲清「双配色随系统」── */
+  .sw { width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.13); }
+  .sw-item span { font-size: 10px; color: #8a8a8a; letter-spacing: 0.04em; font-family: var(--mono); }
+  /* ── 右:亮暗双卡,一张图讲清「双配色随系统」(主视觉,350px/栏) ── */
   .duo {
-    flex: 1; display: flex; align-items: stretch;
+    width: 700px; flex: none; display: flex; align-items: stretch;
     border-left: 1px solid var(--border-dark);
   }
   .pane {
     flex: 1; display: flex; flex-direction: column; justify-content: center;
-    padding: 44px 26px; gap: 14px; position: relative;
+    padding: 48px 24px; gap: 15px; position: relative;
   }
   .pane.light { background: linear-gradient(170deg, #fdfdfd 0%, #f4f4f4 100%); color: var(--fg-light); }
   .pane.dark  { background: linear-gradient(170deg, #1b1b1b 0%, #171717 100%); color: var(--fg-dark); }
   .pane + .pane { border-left: 1px solid rgba(128,128,128,0.28); }
   .pane-label {
-    position: absolute; top: 20px; left: 26px;
+    position: absolute; top: 22px; left: 24px;
     display: flex; align-items: center; gap: 7px;
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
   }
   .pane.light .pane-label { color: var(--muted-light); }
   .pane.dark  .pane-label { color: var(--muted-dark); }
@@ -80,12 +82,12 @@
   .pane.dark  .mini { background: var(--ink-dark); border: 1px solid var(--border-dark); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
   .bubble {
     width: fit-content; border-radius: 12px; padding: 8px 12px;
-    font-size: 12.5px; line-height: 18px; margin-left: auto; max-width: 90%;
+    font-size: 13px; line-height: 19px; margin-left: auto; max-width: 100%;
   }
   .pane.light .bubble { background: var(--bubble-light); color: var(--fg-light); }
   .pane.dark  .bubble { background: var(--bubble-dark); color: var(--fg-dark); }
-  .reply { margin-top: 12px; font-size: 12.5px; line-height: 19px; }
-  .reply .h { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .reply { margin-top: 13px; font-size: 13px; line-height: 20px; }
+  .reply .h { font-weight: 600; font-size: 13.5px; margin-bottom: 5px; }
   .pane.light .reply .h { color: #111; }
   .pane.dark  .reply .h { color: #fff; }
   .pane.light .reply p { color: #2c2c2c; }
@@ -96,15 +98,15 @@
   .pane.light .reply code { background: rgba(0,0,0,0.055); }
   .pane.dark  .reply code { background: rgba(255,255,255,0.07); }
   .tool {
-    margin-top: 12px; font-family: var(--mono); font-size: 10.5px; display: flex; align-items: center; gap: 6px;
+    margin-top: 13px; font-family: var(--mono); font-size: 10px; display: flex; align-items: center; gap: 6px;
   }
   .pane.light .tool { color: var(--muted-light); }
   .pane.dark  .tool { color: var(--muted-dark); }
   .tool .tick { color: var(--blue-light); }
   .pane.dark .tool .tick { color: var(--blue); }
   .composer {
-    margin-top: 14px; display: flex; align-items: center; justify-content: space-between;
-    border-radius: 20px; padding: 9px 14px; font-size: 12px;
+    margin-top: 15px; display: flex; align-items: center; justify-content: space-between;
+    border-radius: 20px; padding: 9px 14px; font-size: 12.5px;
   }
   .pane.light .composer { background: var(--paper-2); border: 1px solid var(--border-light); color: #9a9a9a; }
   .pane.dark  .composer { background: #242424; border: 1px solid var(--border-dark); color: #7c7c7c; }
