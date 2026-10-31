@@ -1,9 +1,9 @@
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a>
+  <img src="assets/cover.png" alt="Codex Theme — Hermes 桌面聊天的石墨纸感主题" width="100%">
 </p>
 
 <p align="center">
-  <img src="assets/cover.png" alt="Codex Theme — Hermes 桌面聊天的石墨纸感主题" width="100%">
+  <a href="README.md">English</a> | 简体中文
 </p>
 
 <h1 align="center">Codex Theme</h1>

@@ -1,9 +1,9 @@
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a>
+  <img src="assets/cover.png" alt="Codex Theme — a graphite-on-paper theme for the Hermes Desktop chat" width="100%">
 </p>
 
 <p align="center">
-  <img src="assets/cover.png" alt="Codex Theme — a graphite-on-paper theme for the Hermes Desktop chat" width="100%">
+  English | <a href="README.zh-CN.md">简体中文</a>
 </p>
 
 <h1 align="center">Codex Theme</h1>
