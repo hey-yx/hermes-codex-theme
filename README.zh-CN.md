@@ -9,8 +9,8 @@
 <h1 align="center">Codex Theme</h1>
 
 <p align="center">
-  <em>Hermes 桌面聊天的石墨纸感主题 —— 设计语言学自 OpenAI Codex 与 ChatGPT<br>
-  A graphite-on-paper theme for the Hermes Desktop chat — after the design
+  <em>仿 OpenAI Codex 与 ChatGPT 设计语言的 Hermes 桌面主题插件<br>
+  A graphite-on-paper theme plugin for the Hermes Desktop — after the design
   language of OpenAI Codex &amp; ChatGPT</em>
 </p>
 
