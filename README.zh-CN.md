@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/cover.png" alt="Codex Theme — Hermes 桌面聊天的石墨纸感主题" width="100%">
+  <img src="assets/cover.png" alt="Codex Theme：Hermes 桌面聊天的石墨纸感主题" width="100%">
 </p>
 
 <p align="center">
@@ -10,7 +10,7 @@
 
 <p align="center">
   <em>仿 OpenAI Codex 与 ChatGPT 设计语言的 Hermes 桌面主题插件<br>
-  A graphite-on-paper theme plugin for the Hermes Desktop — after the design
+  A graphite-on-paper theme plugin for the Hermes Desktop, following the design
   language of OpenAI Codex &amp; ChatGPT</em>
 </p>
 
@@ -29,50 +29,50 @@
 </p>
 
 亮暗双套配色自动跟随系统外观，字体、圆角与间距按 OpenAI Codex 应用和 ChatGPT
-的设计语言调校。设置页中英双语，插件对你说的每句话都走本地化。
+的设计语言调校。设置页中英双语，界面上每句提示都有中英两版。
 
 ## 亮点
 
-- **亮暗免管** —— 两套手工调校的配色，默认跟随系统外观，也可在设置里钉死一套
-- **石墨纸感** —— 平面表面、发丝线边框（`#E7E7E7` / `#2A2A2A`）、层级靠字重
+- **亮暗免管**：两套手工调校的配色，默认跟随系统外观，也可在设置里钉死一套
+- **石墨纸感**：平面表面、发丝线边框（`#E7E7E7` / `#2A2A2A`）、层级靠字重
   （600/500/400）承载；蓝色（浅 `#0285FF` / 深 `#339CFF`）只做交互，绝不用于装饰
-- **OpenAI 圆角刻度** —— 行内代码 4px · 侧栏行 8px · 控件 10px ·
+- **OpenAI 圆角刻度**：行内代码 4px · 侧栏行 8px · 控件 10px ·
   卡片/气泡/菜单/弹窗 12px · 输入区 20px
-- **内容间距三档** —— 紧凑 1.5 / 舒适 1.625（默认）/ 宽松 1.75 行高，
+- **内容间距三档**：紧凑 1.5 / 舒适 1.625（默认）/ 宽松 1.75 行高，
   段距与气泡内距随档联动
-- **阅读宽度 768 / 880 / 992px** —— 紧凑 / 舒适（默认）/ 宽松，
-  比 ChatGPT 的 720–768px 更宽
-- **正文字体 / 代码字体预设** —— 正文（默认 / 衬线 / 等宽）与代码
+- **阅读宽度 768 / 880 / 992px**：紧凑 / 舒适（默认）/ 宽松，
+  比 ChatGPT 的 720-768px 更宽
+- **正文字体 / 代码字体预设**：正文（默认 / 衬线 / 等宽）与代码
   （默认 / Fira Code / Courier），每档都排中文回退，中英文混排皆可读；
   「默认」档完全不覆盖你的字体设置
-- **气泡颜色自定义** —— 用户气泡与助手回复的背景色、文字色都可自选；
+- **气泡颜色自定义**：用户气泡与助手回复的背景色、文字色都可自选；
   「默认」保持主题原色
-- **中英双语界面** —— 默认跟随系统与应用语言，也可在设置里固定为中文或英文；
+- **中英双语界面**：默认跟随系统与应用语言，也可在设置里固定为中文或英文；
   标签、提示、弹窗文案全部本地化
-- **一键反馈** —— 设置页带「打开 GitHub Issues」按钮，经系统交给浏览器打开
-- **尊重你的配置** —— 正文字号、界面模式、透明度、会话列表密度等
+- **一键反馈**：设置页带「打开 GitHub Issues」按钮，经系统交给浏览器打开
+- **尊重你的配置**：正文字号、界面模式、透明度、会话列表密度等
   全部仍由 Hermes 自己的设置管理；主题只画主题级 token
 
 ## 效果
 
 <p align="center">
-  <img src="assets/theme-light.png" alt="浅色配色 —— 渲染样张" width="49%">
-  <img src="assets/theme-dark.png" alt="深色配色 —— 渲染样张" width="49%">
+  <img src="assets/theme-light.png" alt="浅色配色，渲染样张" width="49%">
+  <img src="assets/theme-dark.png" alt="深色配色，渲染样张" width="49%">
 </p>
 
-<p align="center"><em>两套配色的渲染样张 —— 左浅色、右深色。</em></p>
+<p align="center"><em>两套配色的渲染样张：左浅色、右深色。</em></p>
 
 ## 设计语言
 
 | 原则 | 落法 |
 |---|---|
 | 石墨纸感 | 近白画布（`#FFFFFF`）/ 近黑画布（`#181818`） |
-| 字重承载层级 | 标题 600、标签 500、正文 400 —— 不用装饰色 |
+| 字重承载层级 | 标题 600、标签 500、正文 400，不用装饰色 |
 | 蓝色只做交互 | 浅 `#0285FF` / 深 `#339CFF`：链接、焦点环、选区 |
 | 发丝线代替阴影 | 1px 描边（`#E7E7E7` / `#2A2A2A`）做层次，表面保持平整 |
 | 圆角刻度 | 行内 4px · 行 8px · 控件 10px · 卡片/气泡/弹窗 12px · 输入区 20px |
-| 行高 | 根行高 1.625 —— 取自 ZCode 聊天正文实测值（14px × leading-relaxed）；间距档位 1.5 / 1.625 / 1.75 |
-| 阅读宽度 | 默认 880px · 三档 768 / 880 / 992px（ChatGPT：720–768px） |
+| 行高 | 根行高 1.625（正文 14px × leading-relaxed），间距档位 1.5 / 1.625 / 1.75 |
+| 阅读宽度 | 默认 880px · 三档 768 / 880 / 992px（ChatGPT：720-768px） |
 
 ### 配色
 
@@ -130,7 +130,7 @@ hermes plugins install hey-yx/hermes-codex-theme
 （中英文搜索词都能命中）。
 
 > [!NOTE]
-> 选非默认字体档会整体覆盖 `--dt-font-sans` / `--dt-font-mono` ——
+> 选非默认字体档会整体覆盖 `--dt-font-sans` / `--dt-font-mono`，
 > 包括你在 Hermes 外观设置里配的自定义聊天字体；「默认」档完全不覆盖。
 > 气泡颜色改完立即生效、重启后保留，亮暗两套同一颜色，且只在 Codex 主题
 > 生效时上色；点「默认」恢复主题原色。
@@ -138,11 +138,11 @@ hermes plugins install hey-yx/hermes-codex-theme
 ### 这个主题刻意不碰的东西
 
 你的 Hermes 配置归你。主题只画**主题级 token**（配色、字体栈、圆角、间距），
-所有用户可配置项一概不碰 —— 正文字号（设置 → 外观）、界面模式、透明度、
+所有用户可配置项一概不碰：正文字号（设置 → 外观）、界面模式、透明度、
 会话列表密度、聊天背景、时间戳，以及 `config.yaml` 里的一切。两条铁律：
 
 > [!IMPORTANT]
-> - 主题绝不写 `--chat-text-scale` —— 那个旋钮归 **设置 → 外观** 所有，
+> - 主题绝不写 `--chat-text-scale`，那个旋钮归 **设置 → 外观** 所有，
 >   写了就会出现两个所有者互相覆盖。
 > - 主题只在首次安装时接管一次配色；之后你在「外观」里手动选的主题永远优先，
 >   「重新应用」是主动操作。
@@ -157,7 +157,7 @@ hermes plugins install hey-yx/hermes-codex-theme
 - **不打核心补丁。** 主题、命令面板行、设置页全部通过桌面插件 SDK 注册
   （`THEMES_AREA`、`PALETTE_AREA`、`ctx.registerSettingsPage`、`ctx.i18n`）。
 - **外链一处：**「反馈问题」按钮请系统在浏览器打开仓库 Issues 页
-  （`ctx.os.openExternal`）—— 全插件唯一的对外动作，且只在你按下按钮时发生。
+  （`ctx.os.openExternal`），也是全插件唯一的对外动作，且只在你按下按钮时发生。
 - **存储：** 仅插件自有存储（`ctx.storage`），保存设置页的选择
   （亮暗模式、阅读宽度、内容间距、字体、气泡颜色与语言），外加首次安装标记。
 - **样式：** 主题的 `customCSS` 由应用自带主题引擎以作用域样式注入，
@@ -165,8 +165,8 @@ hermes plugins install hey-yx/hermes-codex-theme
 
 ## 致谢
 
-设计语言致意 **OpenAI Codex 应用**与 **ChatGPT**（石墨纸感配色、圆角刻度、
-间距节奏）。这是独立的社区主题 —— 与 OpenAI 无隶属、无背书关系。
+设计语言致敬 **OpenAI Codex 应用**与 **ChatGPT**（石墨纸感配色、圆角刻度、
+间距节奏）。这是独立的社区主题，与 OpenAI 无隶属、无背书关系。
 
 基于 [Hermes Desktop Plugin SDK](https://hermes-agent.nousresearch.com/docs/developer-guide/desktop-plugin-sdk)
 构建，[MIT 许可证](LICENSE) 发布。

@@ -310,10 +310,10 @@ const customCSSBase = `
   --codex-shadow-composer: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 6px 16px -4px rgb(0 0 0 / 0.08);
   --codex-shadow-composer-focus: 0 2px 4px 0 rgb(0 0 0 / 0.06), 0 10px 24px -6px rgb(0 0 0 / 0.12);
 }
-/* 文字渲染对齐 ZCode：Hermes 在 body 上全局 -webkit-font-smoothing:antialiased
-   （灰度 AA，Retina 下笔画偏细、观感发虚）；ZCode 的渲染 CSS 无任何 smoothing
-   声明，走 Chromium 默认 subpixel 渲染，笔画饱满平滑。body 显式声明会挡住 html
-   的继承，必须同位覆盖；html body 抬特异性，不依赖 customCSS 的注入顺序。
+/* 文字渲染：Hermes 在 body 上全局 -webkit-font-smoothing:antialiased
+   （灰度 AA，Retina 下笔画偏细、观感发虚）；这里重新声明成 Chromium 默认的
+   subpixel 渲染，笔画饱满平滑。body 显式声明会挡住 html 的继承，必须同位覆盖；
+   html body 抬特异性，不依赖 customCSS 的注入顺序。
    app 的 .antialiased 工具类在 JS 里 0 处使用，无更高特异性竞争。 */
 html body {
   -webkit-font-smoothing: subpixel-antialiased;
@@ -734,19 +734,18 @@ const codexTheme = {
   darkColors: dark,
   typography: {
     // 栈内不放显式中文字体名：ui-sans-serif / generic sans-serif 在 -webkit-locale
-    // "en" 下 CJK 落系统 UI 变体（.蘋方 UI Text-簡，ZCode 同款观感）。栈里只要在
+    // "en" 下 CJK 落系统 UI 变体（.蘋方 UI Text-簡）。栈里只要在
     // generic 之前出现任何显式中文字体名（含私有变体名 '.蘋方 UI Text-簡'——它
     // 直写时 CJK 反而解析成普通苹方），UI 变体就会被截胡（CDP 逐项实测确认）。
     // CJK 兜底交给系统回退（Linux fontconfig 出 Noto Sans CJK，Windows 出雅黑）。
     fontSans:
       "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', emoji",
     // 等宽栈同理：不列显式 CJK 名，generic monospace 在 macOS 落 Menlo，CJK 随
-    // locale 走系统回退（与 ZCode 的 --font-mono 行为一致）。
+    // locale 走系统回退。
     fontMono:
       "ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', emoji",
     // 根行高（画到 --dt-line-height）：正文、消息内容、界面文字统一的行距基线。
-    // 1.625 对齐 ZCode 聊天正文（编译 CSS 实测：--text-ui-base 14px ×
-    // --leading-relaxed 1.625）；旧值 1.4286 按「20px 行距」推的，实机对比偏紧。
+    // 1.625 = 正文 14px × leading-relaxed 1.625；旧值 1.4286 按「20px 行距」推的，实机对比偏紧。
     // 「内容间距」档位会按 pref 生成 :root 声明覆盖此值。
     lineHeight: '1.625'
   }
@@ -1179,7 +1178,7 @@ export default {
   id: ID,
   name: 'Codex Theme',
   // 面板描述的唯一来源（desktop 契约无 version/author 字段，尾注与 plugin.yaml 的 version/author 同步）
-  description: 'Codex × ChatGPT inspired theme for the Hermes Desktop chat — dual light/dark palettes that follow the system appearance, graphite-on-paper typography with a 1.625 root line height (aligned to ZCode) and content-spacing presets (1.5/1.625/1.75), the OpenAI radius scale (inline 4px / rows 8px / controls 10px / cards 12px / composer 20px), hairline borders, and a bilingual Settings page (appearance mode, 768/880/992px reading width, text & code font presets, user/assistant chat bubble colors, zh/en language, GitHub Issues feedback). (v1.2.0 · hey-yx)',
+  description: 'Codex × ChatGPT inspired theme for the Hermes Desktop chat — dual light/dark palettes that follow the system appearance, graphite-on-paper typography with a 1.625 root line height and content-spacing presets (1.5/1.625/1.75), the OpenAI radius scale (inline 4px / rows 8px / controls 10px / cards 12px / composer 20px), hairline borders, and a bilingual Settings page (appearance mode, 768/880/992px reading width, text & code font presets, user/assistant chat bubble colors, zh/en language, GitHub Issues feedback). (v1.2.0 · hey-yx)',
   register(ctx) {
     storage = ctx.storage
     pluginOs = ctx.os || null
